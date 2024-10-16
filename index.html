@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VVTube is a user-friendly tool for downloading YouTube videos quickly and easily. Just enter the video URL and get your video ready for offline viewing.">
+    <meta name="keywords" content="YouTube downloader, video downloader, download high quality YouTube videos, , fast download">
+    
+     <!-- Open Graph (for social media sharing) -->
+     <meta property="og:title" content="VVTube - YouTube Video Downloader">
+     <meta property="og:description" content="Download YouTube videos easily with VVTube. Just paste the video URL and download your video instantly.">
+     <meta property="og:image" content="/static/social-image.png"> <!-- Image for preview when shared -->
+     <meta property="og:url" content="https://www.vvtube.com">
+     <meta property="og:type" content="website">
+ 
+     <!-- Twitter Card for better previews -->
+     <meta name="twitter:card" content="summary_large_image">
+     <meta name="twitter:title" content="VVTube - YouTube Video Downloader">
+     <meta name="twitter:description" content="Quickly download YouTube videos with VVTube by pasting the video URL.">
+     <meta name="twitter:image" content="/static/twitter-image.png">
+    
+     <title>YouTube Video Downloader</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+<link rel="manifest" href="/static/site.webmanifest">
+ <!-- Preload important assets -->
+ <link rel="preload" href="/static/favicon-32x32.png" as="image">
+    <style>
+         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #5b398f42;
+            color: #333;
+            padding: 100px;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #72bcb9;
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .navbar .logo-section {
+            display: flex;
+            align-items: center; /* Vertically centers the items */
+        }
+
+        .navbar img {
+            height: 40px;
+            margin-right: 10px;
+            display: block; /* Ensures the image is treated as a block element */
+        }
+
+        .navbar h1 {
+            color: white;
+            font-size: 24px;
+            line-height: 40px; /* Matches the height of the image for vertical alignment */
+            margin: 0; /* Removes any default margin */
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar ul li {
+            margin-left: 15px;
+            position: relative;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar ul li a:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #72bcb9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar ul li:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Responsive design */
+        @media screen and (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar ul {
+                flex-direction: column;
+                width: 100%;
+                align-items: flex-start;
+            }
+
+            .navbar ul li {
+                margin: 10px 0;
+            }
+        }
+        
+
+
+        body {
+            --s: 25vmin;
+            --p: calc(var(--s) / 2);
+            --c1: pink;
+            --c2: dodgerblue;
+            --c3: white;
+            --bg: var(--c3);
+            --d: 4000ms;
+            --e: cubic-bezier(0.76, 0, 0.24, 1);
+            
+            background-color: var(--bg);
+            background-image:
+                linear-gradient(45deg, var(--c1) 25%, transparent 25%),
+                linear-gradient(-45deg, var(--c1) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, var(--c2) 75%),
+                linear-gradient(-45deg, transparent 75%, var(--c2) 75%);
+            background-size: var(--s) var(--s);
+            background-position: 
+                calc(var(--p) *  1) calc(var(--p) *  0), 
+                calc(var(--p) * -1) calc(var(--p) *  1), 
+                calc(var(--p) *  1) calc(var(--p) * -1), 
+                calc(var(--p) * -1) calc(var(--p) *  0);
+            animation: 
+                color var(--d) var(--e) infinite,
+                position var(--d) var(--e) infinite;
+        }
+
+        @keyframes color {
+            0%, 25% {
+                --bg: var(--c3);
+            }
+            26%, 50% {
+                --bg: var(--c1);
+            }
+            51%, 75% {
+                --bg: var(--c3);
+            }
+            76%, 100% {
+                --bg: var(--c2);
+            }
+        }
+
+        @keyframes position {
+            0% {
+                background-position: 
+                    calc(var(--p) *  1) calc(var(--p) *  0), 
+                    calc(var(--p) * -1) calc(var(--p) *  1), 
+                    calc(var(--p) *  1) calc(var(--p) * -1), 
+                    calc(var(--p) * -1) calc(var(--p) *  0);
+            }
+            25% {
+                background-position: 
+                    calc(var(--p) *  1) calc(var(--p) *  4), 
+                    calc(var(--p) * -1) calc(var(--p) *  5), 
+                    calc(var(--p) *  1) calc(var(--p) *  3), 
+                    calc(var(--p) * -1) calc(var(--p) *  4);
+            }
+            50% {
+                background-position: 
+                    calc(var(--p) *  3) calc(var(--p) * 8), 
+                    calc(var(--p) * -3) calc(var(--p) * 9), 
+                    calc(var(--p) *  2) calc(var(--p) * 7), 
+                    calc(var(--p) * -2) calc(var(--p) * 8);
+            }
+            75% {
+                background-position: 
+                    calc(var(--p) *  3) calc(var(--p) * 12), 
+                    calc(var(--p) * -3) calc(var(--p) * 13), 
+                    calc(var(--p) *  2) calc(var(--p) * 11), 
+                    calc(var(--p) * -2) calc(var(--p) * 12);
+            }
+            100% {    
+                background-position: 
+                    calc(var(--p) *  5) calc(var(--p) * 16), 
+                    calc(var(--p) * -5) calc(var(--p) * 17), 
+                    calc(var(--p) *  5) calc(var(--p) * 15), 
+                    calc(var(--p) * -5) calc(var(--p) * 16);
+            }
+        }
+
+        @media (prefers-reduced-motion) {
+            body {
+                animation: none;
+            }
+        }
+        .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#description {
+    margin: 15px 0;
+    font-size: 1.2em;
+    color: #555; /* Change color as needed */
+    line-height: 1.5;
+}
+
+body {
+    margin: 0; /* Remove default margin */
+    height: 100vh; /* Set the body height to full viewport height */
+    overflow: auto; /* Enable scrolling */
+}
+
+.container {
+    width: 90vw; /* Set the width to 90% of the viewport width */
+    height: auto; /* Allow height to adjust based on content */
+    min-height: 90vh; /* Ensure the container is at least 90% of viewport height */
+    margin: 5vh auto; /* Center the container and add margin on top and bottom */
+    padding: 50px; /* Padding inside the container */
+    background: white; /* Background color */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    display: flex; /* Use flexbox for centering content */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: flex-start; /* Align items to the top */
+    align-items: center; /* Center items horizontally */
+}
+
+
+
+
+        h1 {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo-section">
+        <a href="/">
+        <img src="/static/video-lesson.png" alt="VVTube Logo">
+        </a>
+        <h1>VVTube</h1>
+    </div>
+    <ul>
+        <li>
+            <select id="languageSelector">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="hi">हिन्दी</option>
+                <option value="zh">中文</option>
+            </select>
+        </li>
+    </ul>
+</nav>
+<div class="container">
+    <h1 id="downloaderTitle">YouTube Video Downloader</h1>
+    <form id="downloadForm">
+        <label id="videoLabel" for="videoUrl">Enter YouTube Video URL:</label>
+        <input type="text" id="videoUrl" placeholder="video-url" required>
+        <button type="submit" id="downloadButton">Download Video</button>
+    </form>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+// Translations logic
+const translations = {
+    en: {
+        appTitle: "VVTube",
+        downloaderTitle: "YouTube Video Downloader",
+        videoLabel: "Enter YouTube Video URL:",
+        downloadButton: "Download Video"
+    },
+    es: {
+        appTitle: "VVTube",
+        downloaderTitle: "Descargador de Videos de YouTube",
+        videoLabel: "Ingresa la URL del video de YouTube:",
+        downloadButton: "Descargar Video"
+    },
+    // Add other languages...
+};
+
+function changeLanguage(language) {
+    const selectedLang = translations[language];
+    document.getElementById('downloaderTitle').innerText = selectedLang.downloaderTitle;
+    document.getElementById('videoLabel').innerText = selectedLang.videoLabel;
+    document.getElementById('downloadButton').innerText = selectedLang.downloadButton;
+}
+
+// Add event listener for language selection (if you add the language selector later)
+document.getElementById('languageSelector')?.addEventListener('change', function() {
+    const selectedLanguage = this.value;
+    changeLanguage(selectedLanguage);
+});
+
+// Function to validate YouTube URL
+function isValidYouTubeUrl(url) {
+    const regex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+    return regex.test(url);
+}
+
+// Handle form submission
+document.getElementById('downloadForm').addEventListener('submit', async function(event) {
+    event.preventDefault();  // Prevent the default form submission
+
+    const videoUrl = document.getElementById('videoUrl').value;
+    const messageDiv = document.getElementById('message');
+    const submitButton = document.getElementById('downloadButton');  // Get the submit button
+
+    // Clear previous message
+    messageDiv.textContent = '';
+    submitButton.disabled = true;  // Disable the button to prevent multiple submissions
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/download/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ video_url: videoUrl }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        messageDiv.textContent = result.status;  // Display success message
+        document.getElementById('videoUrl').value = '';  // Optionally clear the input field
+    } catch (error) {
+        messageDiv.textContent = `Error: ${error.message}`;  // Display error message
+    } finally {
+        submitButton.disabled = false;  // Re-enable the submit button
+    }
+});
+</script>
+<footer>
+    <p>&copy; 2024VVTube All rights reserved.</p>
+</footer>
+</body>
+</html>
